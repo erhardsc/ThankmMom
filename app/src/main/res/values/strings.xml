@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Thanks Mom</string>
+
+    <string name="pref_frequency_label">Frequency</string>
+
+    <string name="pref_label_daily">Daily</string>
+
+    <string name="pref_label_weekly">Weekly</string>
+
+    <string name="pref_frequency_key" translatable="false">frequency</string>
+
+    <string name="pref_value_daily" translatable="false">daily</string>
+
+    <string name="pref_value_weekly" translatable="false">weekly</string>
+
 </resources>

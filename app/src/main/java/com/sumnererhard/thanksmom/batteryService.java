@@ -35,12 +35,18 @@ public class batteryService extends Service {
         public int runTime;
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(ACTION_POWER_CONNECTED) && getSystemTime() - runTime == 7) {
+
+            // grabbing the days integer value
+            SharedPreferences fetchInt = getSharedPreferences("integers.xml", 0);
+            int oldTime = fetchInt.getInt("oldSystemTime", 0);
+
+            int weekLater = oldTime + 7;
+
+            if (intent.getAction().equals(ACTION_POWER_CONNECTED) && oldTime == weekLater) {
                 Toast.makeText(context, "Juicin'", Toast.LENGTH_SHORT).show();
                 clearApplicationData();
-                int total = getSystemTime() - runTime;
-                Log.d("New Run time", "value: " + total);
-                runTime = getSystemTime();
+                getSystemTime();
+
             } else {
 
                 intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED);
@@ -75,7 +81,9 @@ public class batteryService extends Service {
         Weeks weeks = weeksBetween(epoch, now);
         Months months = Months.monthsBetween(epoch, now);
 
-        SharedPreferences.Editor editor = getSharedPreferences("prefs_general.xml", MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = getSharedPreferences("integers.xml", MODE_PRIVATE).edit();
+        editor.putInt("oldSystemTime", days.getDays());
+        editor.commit();
 
         return days.getDays();
     }

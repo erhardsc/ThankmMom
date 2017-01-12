@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.util.Log;
+import android.util.LruCache;
 import android.widget.Toast;
 
 import org.joda.time.DateTime;
@@ -30,6 +31,7 @@ import static org.joda.time.Weeks.weeksBetween;
 public class batteryService extends Service {
 
     private MainActivity main;
+    private LruCache mCache;
 
     private BroadcastReceiver mBatteryStatus = new BroadcastReceiver() {
         public int runTime;
@@ -40,12 +42,10 @@ public class batteryService extends Service {
             SharedPreferences fetchInt = getSharedPreferences("integers.xml", 0);
             int oldTime = fetchInt.getInt("oldSystemTime", 0);
 
-            int weekLater = oldTime + 7;
-
-            if (intent.getAction().equals(ACTION_POWER_CONNECTED) && oldTime == weekLater) {
+            if (intent.getAction().equals(ACTION_POWER_CONNECTED) && (oldTime == oldTime + 7 || oldTime == 0)) {
                 Toast.makeText(context, "Juicin'", Toast.LENGTH_SHORT).show();
+                //getSystemTime();
                 clearApplicationData();
-                getSystemTime();
 
             } else {
 
@@ -95,6 +95,8 @@ public class batteryService extends Service {
             if (m.getName().equals("freeStorage")){
                 try{
                     Log.i("Method Package", m.toGenericString());
+                    long desiredFreeStorage = Long.MAX_VALUE;
+                    m.invoke(pm, desiredFreeStorage, null);
                 } catch (Exception e){
 
                 }

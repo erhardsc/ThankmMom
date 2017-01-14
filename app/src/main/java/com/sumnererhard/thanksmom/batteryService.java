@@ -34,7 +34,7 @@ public class batteryService extends Service {
     private LruCache mCache;
 
     private BroadcastReceiver mBatteryStatus = new BroadcastReceiver() {
-        public int runTime;
+
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -44,15 +44,15 @@ public class batteryService extends Service {
 
             if (intent.getAction().equals(ACTION_POWER_CONNECTED) && (oldTime == oldTime + 7 || oldTime == 0)) {
                 Toast.makeText(context, "Juicin'", Toast.LENGTH_SHORT).show();
-                //getSystemTime();
+                getSystemTime();
                 clearApplicationData();
 
             } else {
 
                 intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED);
                 Toast.makeText(context, "Not Juicin'", Toast.LENGTH_SHORT).show();
-                runTime = getSystemTime();
-                Log.d("New Run time", "value: " + runTime);
+                Log.d("System Run time", "value: " + oldTime);
+
             }
         }
     };

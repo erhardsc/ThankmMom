@@ -16,7 +16,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (myService == null){
              //start the service
-             //int oldRuntime = myService.getSystemTime();
              Intent intent = new Intent(this, batteryService.class);
              startService(intent);
          }

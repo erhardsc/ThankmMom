@@ -41,17 +41,25 @@ public class batteryService extends Service {
             // grabbing the days integer value
             SharedPreferences fetchInt = getSharedPreferences("integers.xml", 0);
             int oldTime = fetchInt.getInt("oldSystemTime", 0);
+            MutableDateTime epoch = new MutableDateTime();
+            epoch.setDate(0);
+            DateTime now = new DateTime();
 
-            if (intent.getAction().equals(ACTION_POWER_CONNECTED) && (oldTime == oldTime + 7 || oldTime == 0)) {
+            Days days = Days.daysBetween(epoch, now);
+            int newTime = days.getDays();
+            int mOldTime = oldTime + 7;
+
+            if (intent.getAction().equals(ACTION_POWER_CONNECTED) && (newTime == mOldTime || oldTime == 0)) {
                 Toast.makeText(context, "Juicin'", Toast.LENGTH_SHORT).show();
-                getSystemTime();
+                //getSystemTime();
                 clearApplicationData();
 
             } else {
 
-                intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED);
+                //intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED);
                 Toast.makeText(context, "Not Juicin'", Toast.LENGTH_SHORT).show();
                 Log.d("System Run time", "value: " + oldTime);
+                Log.d("System Run time", "value: " + days.getDays());
 
             }
         }

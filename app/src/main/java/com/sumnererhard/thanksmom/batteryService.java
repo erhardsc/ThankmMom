@@ -51,7 +51,7 @@ public class batteryService extends Service {
 
             if (intent.getAction().equals(ACTION_POWER_CONNECTED) && (newTime == mOldTime || oldTime == 0)) {
                 Toast.makeText(context, "Juicin'", Toast.LENGTH_SHORT).show();
-                //getSystemTime();
+                getSystemTime();
                 clearApplicationData();
 
             } else {

@@ -17,4 +17,8 @@ public class Tab2Info extends Fragment {
 
         return rootView;
     }
+
+
+
+
 }

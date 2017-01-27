@@ -49,7 +49,7 @@ public class batteryService extends Service {
             int newTime = days.getDays();
             int mOldTime = oldTime + 7;
 
-            if (intent.getAction().equals(ACTION_POWER_CONNECTED) && (newTime == mOldTime || oldTime == 0)) {
+            if (intent.getAction().equals(ACTION_POWER_CONNECTED) && (newTime >= mOldTime || oldTime == 0)) {
                 Toast.makeText(context, "Juicin'", Toast.LENGTH_SHORT).show();
                 getSystemTime();
                 clearApplicationData();
@@ -60,7 +60,7 @@ public class batteryService extends Service {
                 Toast.makeText(context, "Not Juicin'", Toast.LENGTH_SHORT).show();
                 Log.d("System Run time", "value: " + oldTime);
                 Log.d("System Run time", "value: " + days.getDays());
-
+                clearApplicationData();
             }
         }
     };
@@ -99,50 +99,23 @@ public class batteryService extends Service {
     public void clearApplicationData() {
         PackageManager pm = getPackageManager();
         Method[] methods = pm.getClass().getDeclaredMethods();
+
         for (Method m : methods) {
-            if (m.getName().equals("freeStorage")){
-                try{
+            if (m.getName().equals("freeStorage")) {
+                try {
                     Log.i("Method Package", m.toGenericString());
+                    Log.i("File Info", m.getDefaultValue().toString());
+
                     long desiredFreeStorage = Long.MAX_VALUE;
                     m.invoke(pm, desiredFreeStorage, null);
-                } catch (Exception e){
-
+                } catch (Exception e) {
+                    Log.i("Exception", e.toString());
                 }
                 break;
             }
         }
 
-//        try {
-//            File cacheDirectory = getCacheDir();
-//            File applicationDirectory = new File(cacheDirectory.getParent());
-//            if (applicationDirectory.exists()) {
-//                String[] fileNames = applicationDirectory.list();
-//                for (String fileName : fileNames) {
-//                    if (!fileName.equals("lib")) {
-//                        deleteFile(new File(applicationDirectory, fileName));
-//                    }
-//                }
-//                Toast.makeText(getApplicationContext(), "Deleting Application Cache", Toast.LENGTH_LONG).show();
-//                Toast.makeText(getApplicationContext(), "Thanks Mom", Toast.LENGTH_LONG).show();
-//            }
-//        }catch(Exception e){
-//            Toast.makeText(getApplicationContext(), "Sorry, not enough cache to delete right now", Toast.LENGTH_LONG).show();
-//        }
     }
 
-//    public static boolean deleteFile(File file) {
-//        boolean deletedAll = false;
-//        if (file != null) {
-//            if (file.isDirectory()) {
-//                String[] children = file.list();
-//                for (int i = 0; i < children.length; i++) {
-//                    deletedAll = deleteFile(new File(file, children[i])) && deletedAll;
-//                }
-//            } else {
-//                deletedAll = file.delete();
-//            }
-//        }
-//
-//        return deletedAll;
-//    }
 }
+

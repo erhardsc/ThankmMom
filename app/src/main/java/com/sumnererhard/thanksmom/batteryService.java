@@ -18,6 +18,7 @@ import org.joda.time.Months;
 import org.joda.time.MutableDateTime;
 import org.joda.time.Weeks;
 
+import java.io.File;
 import java.lang.reflect.Method;
 
 import static android.content.Intent.ACTION_POWER_CONNECTED;
@@ -103,18 +104,36 @@ public class batteryService extends Service {
         for (Method m : methods) {
             if (m.getName().equals("freeStorage")) {
                 try {
-                    Log.i("Method Package", m.toGenericString());
-                    Log.i("File Info", m.getDefaultValue().toString());
-
-                    long desiredFreeStorage = Long.MAX_VALUE;
+                    long desiredFreeStorage = 8 * 1024 * 1024 * 1024;
                     m.invoke(pm, desiredFreeStorage, null);
                 } catch (Exception e) {
-                    Log.i("Exception", e.toString());
+                    deleteCache(this);
                 }
                 break;
             }
         }
 
+    }
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            if (dir != null && dir.isDirectory()) {
+                deleteDir(dir);
+            }
+        } catch (Exception e) {}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
     }
 
 }

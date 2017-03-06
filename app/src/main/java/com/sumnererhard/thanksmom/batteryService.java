@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.util.LruCache;
@@ -19,7 +19,6 @@ import org.joda.time.MutableDateTime;
 import org.joda.time.Weeks;
 
 import java.io.File;
-import java.lang.reflect.Method;
 
 import static android.content.Intent.ACTION_POWER_CONNECTED;
 import static android.content.Intent.ACTION_POWER_DISCONNECTED;
@@ -53,7 +52,9 @@ public class batteryService extends Service {
             if (intent.getAction().equals(ACTION_POWER_CONNECTED) && (newTime >= mOldTime || oldTime == 0)) {
                 Toast.makeText(context, "Juicin'", Toast.LENGTH_SHORT).show();
                 getSystemTime();
-                clearApplicationData();
+                //clearApplicationData();
+                //File dir = new File(".");
+               // traverse(dir);
 
             } else {
 
@@ -61,7 +62,10 @@ public class batteryService extends Service {
                 Toast.makeText(context, "Not Juicin'", Toast.LENGTH_SHORT).show();
                 Log.d("System Run time", "value: " + oldTime);
                 Log.d("System Run time", "value: " + days.getDays());
-                clearApplicationData();
+                File dir = new File(".");
+                Log.d("System Directory", "value: " + Environment.getDataDirectory());
+                //traverse(dir);
+                //clearApplicationData();
             }
         }
     };
@@ -97,44 +101,96 @@ public class batteryService extends Service {
         return days.getDays();
     }
 
-    public void clearApplicationData() {
-        PackageManager pm = getPackageManager();
-        Method[] methods = pm.getClass().getDeclaredMethods();
+    public void traverse (File dir) {
+        if (dir.exists()) {
+            File[] files = dir.listFiles();
+            for (int i = 0; i < files.length; ++i) {
+                File file = files[i];
+                if (file.isDirectory()) {
+                    Log.d("Directories", "Directory value: " + file.getAbsoluteFile());
+                } else {
+                    // do something here with the file
 
-        for (Method m : methods) {
-            if (m.getName().equals("freeStorage")) {
-                try {
-                    long desiredFreeStorage = 8 * 1024 * 1024 * 1024;
-                    m.invoke(pm, desiredFreeStorage, null);
-                } catch (Exception e) {
-                    deleteCache(this);
-                }
-                break;
-            }
-        }
-
-    }
-    public static void deleteCache(Context context) {
-        try {
-            File dir = context.getCacheDir();
-            if (dir != null && dir.isDirectory()) {
-                deleteDir(dir);
-            }
-        } catch (Exception e) {}
-    }
-
-    public static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
                 }
             }
         }
-        return dir.delete();
     }
+
+//    public class fileWalker extends AsyncTask<Void, Void, Void> {
+//
+//        private final String LOG_TAG = fileWalker.class.getSimpleName();
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//
+//            public void walk(File root) {
+//
+//                File[] list = root.listFiles();
+//
+//                for (File f : list) {
+//                    if (f.isDirectory()) {
+//                        Log.d("", "Dir: " + f.getAbsoluteFile());
+//                        walk(f);
+//                    }
+//                    else {
+//                        Log.d("", "File: " + f.getAbsoluteFile());
+//                    }
+//                }
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//
+//    }
+//
+//    public void clearApplicationData() {
+//        PackageManager pm = getPackageManager();
+//        Method[] methods = pm.getClass().getDeclaredMethods();
+//
+//        for (Method m : methods) {
+//            if (m.getName().equals("freeStorage")) {
+//                try {
+//                    long desiredFreeStorage = 8 * 1024 * 1024 * 1024;
+//                    m.invoke(pm, desiredFreeStorage, null);
+//                } catch (Exception e) {
+//                    deleteCache(this);
+//                }
+//                break;
+//            }
+//        }
+//
+//    }
+//    public static void deleteCache(Context context) {
+//        try {
+//            File dir = context.getCacheDir();
+//            if (dir != null && dir.isDirectory()) {
+//                deleteDir(dir);
+//            }
+//        } catch (Exception e) {}
+//    }
+//
+//    public static boolean deleteDir(File dir) {
+//        if (dir != null && dir.isDirectory()) {
+//            String[] children = dir.list();
+//            for (int i = 0; i < children.length; i++) {
+//                boolean success = deleteDir(new File(dir, children[i]));
+//                if (!success) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return dir.delete();
+//    }
 
 }
 
